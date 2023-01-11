@@ -13,26 +13,32 @@ http.createServer((req,res) => {
         let categories_data = JSON.parse(fs.readFileSync('./data_base/categories.json'))
         let subCategories_data = JSON.parse(fs.readFileSync('./data_base/subCategories.json'))
         let products_data = JSON.parse(fs.readFileSync('./data_base/products.json'))
-        
+        let javob
             // console.log(values[filters[1]]);
 
 
-        function categories_by_id (res,id){
-            let result
+        function categories_by_id (id, res){
+            let result = {}
             categories_data.forEach(category => {
                 if(category.category_id == id){
-                  let object = {
-                      "sub": []
-                  }
+                  let object = []
+                  
                   subCategories_data.forEach(subCat =>{
                       if(subCat.category_id == id ){
-                          object.sub.push(subCat)
+                          object.push(subCat)
                       }
                   }) 
-                  result = {...category,subCategories: object["sub"]}
-                  res.writeHead(200,{"Content-Type": "application/json"})            
-                  return res.end(JSON.stringify(result))
-        }}) 
+                  result = {...category,subCategories: object}
+
+                  
+        }}     
+        ) 
+        if(res){
+            res.writeHead(200,{"Content-Type": "application/json"})            
+            return res.end(JSON.stringify(result))
+        }else{
+          return result
+        }
 
         }        
         
@@ -50,6 +56,7 @@ http.createServer((req,res) => {
                       result.push({...category,subCategories: object.sub})
                       
                     })
+                    javob = result
                     res.writeHead(200,{"Content-Type": "application/json"})
                     return res.end(JSON.stringify(result))
         }        
@@ -108,6 +115,77 @@ http.createServer((req,res) => {
                 res.writeHead(200,{"Content-Type": "application/json"})
                 return res.end(JSON.stringify(result))
         }
+
+        function productsByCategoryId(res,id){
+            let result = []
+                        let jav = categories_by_id(id,0)
+                        jav.subCategories.forEach(sub_id => {
+                            products_data.forEach(pr => {
+
+                                if(pr.sub_category_id == sub_id.sub_category_id){
+
+                                    result.push(pr)
+                                }
+                                
+                            }
+                            )
+                        })
+                        if(res){
+                            res.writeHead(200,{"Content-Type": "application/json"})
+                            return res.end(JSON.stringify(result))
+                        }else{
+                            return result
+                        }
+        }
+
+        function productsBySubCategoryId(res,id){
+            let result = []
+                products_data.forEach( product => {
+                    if(product.sub_category_id == id){
+                       result.push(product)
+                    }
+                })
+                if(res){
+                    res.writeHead(200,{"Content-Type": "application/json"})
+                    return res.end(JSON.stringify(result))
+                }else{
+                    
+                    return result
+                }
+        }
+
+        function productsByModel(res,model){
+            let result = []
+                products_data.forEach( product => {
+                    if(product.model == model){
+                       result.push(product)
+                    }
+                })
+                if(res){
+                    res.writeHead(200,{"Content-Type": "application/json"})
+                    return res.end(JSON.stringify(result))
+                }else{
+                    return result
+                }
+        }
+
+        function queryOneFilter(res,filter,value){
+
+            if(filter =='categoryId'){
+
+                return productsByCategoryId(res,value) 
+
+            }else if(filter =='subCategoryId'){
+
+                return productsBySubCategoryId(res,value)
+
+            }else if(filter =='model'){
+
+                return productsByModel(res,value)
+
+            }
+        }
+
         if(req_name == 'categories'){
 
             if(req_id){ 
@@ -134,17 +212,31 @@ http.createServer((req,res) => {
 
         if(req_name == 'products'){
             if(req_id){
+
                 productById(res,req_id)
+
             }else{
           
-                let result
-                // products_data.forEach( product => {
-                //     if(filters[0] == ){
-                //        result = product 
-                //     }
-                // })
-                res.writeHead(200,{"Content-Type": "application/json"})
-                return res.end(JSON.stringify(result))
+                if(filters.length==1){
+
+                    queryOneFilter(res,filters[0],values[filters[0]])
+                    
+                }else if(filters.length==2){
+
+                    let first_filter = queryOneFilter(0,filters[0],values[filters[0]])
+                    let otvet = []
+                    first_filter.forEach(prod => {
+                        
+                        if(prod[`${filters[1]}`] == values[filters[1]]){
+
+                            otvet.push(prod)
+                        }
+                    })
+                    res.writeHead(200,{"Content-Type": "application/json"})
+                    return res.end(JSON.stringify(otvet))
+
+
+                }
                 
 
             }
