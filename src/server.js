@@ -324,6 +324,24 @@ http.createServer((req,res) => {
                 return res.end('SubCategory was updated!!!')
             })
         }
+
+        if(req_name == 'products'){
+            req.on('data', chunk =>{
+                let update_data = JSON.parse(chunk);
+                products_data.forEach(prod => {
+                    if(prod.product_id == req_id){
+                        prod.sub_category_id = (update_data.sub_category_id || sub.sub_category_id),
+                        prod.model = (update_data.model || sub.model)
+                        prod.product_name = (update_data.product_name || sub.product_name)
+                        prod.color = (update_data.color || sub.color)
+                        prod.price = (update_data.price || sub.price)
+                    }
+                })
+                fs.writeFileSync('./data_base/products.json',JSON.stringify(products_data, null, 4))
+                res.writeHead(200,{"Content-Type": "application/json"})
+                return res.end('Product was updated!!!')
+            })
+        }
     }
 
 
