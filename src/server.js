@@ -261,6 +261,20 @@ http.createServer((req,res) => {
             })
         }
 
+        if(req_name == 'subcategories'){
+            req.on('data', chunk =>{
+                let new_data = JSON.parse(chunk);
+                subCategories_data.push({
+                    sub_category_id: subCategories_data[subCategories_data.length-1].sub_category_id +1,
+                    category_id: new_data.category_id,
+                    sub_category_name: new_data.sub_category_name
+                })
+                fs.writeFileSync('./data_base/subCategories.json',JSON.stringify(subCategories_data, null, 4))
+                res.writeHead(200,{"Content-Type": "application/json"})
+                return res.end('SubCategory was added!!!')
+            })
+        }
+
        
     }
 
