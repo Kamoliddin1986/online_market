@@ -357,6 +357,19 @@ http.createServer((req,res) => {
             res.writeHead(200,{"Content-Type": "application/json"})
             return res.end('Category was deleted')
         }
+
+        if(req_name == 'subcategories'){
+
+            subCategories_data.forEach((sub, inx) => {
+
+                if (sub.sub_category_id == req_id){
+                    subCategories_data.splice(inx,1)
+                }
+            })
+            fs.writeFileSync('./data_base/subCategories.json', JSON.stringify(subCategories_data, null, 4))
+            res.writeHead(200,{"Content-Type": "application/json"})
+            return res.end('subcategory was deleted')
+        }
     }
 
 
