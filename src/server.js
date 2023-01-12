@@ -344,6 +344,21 @@ http.createServer((req,res) => {
         }
     }
 
+    if(req.method == 'DELETE'){
+        if(req_name == 'categories'){
+
+            categories_data.forEach((categ, inx) => {
+
+                if (categ.category_id == req_id){
+                    categories_data.splice(inx,1)
+                }
+            })
+            fs.writeFileSync('./data_base/categories.json', JSON.stringify(categories_data, null, 4))
+            res.writeHead(200,{"Content-Type": "application/json"})
+            return res.end('Category was deleted')
+        }
+    }
+
 
 
 }).listen(4444, ()=> {
