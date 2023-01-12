@@ -370,6 +370,19 @@ http.createServer((req,res) => {
             res.writeHead(200,{"Content-Type": "application/json"})
             return res.end('subcategory was deleted')
         }
+
+        if(req_name == 'products'){
+
+            products_data.forEach((prod, inx) => {
+
+                if (prod.product_id == req_id){
+                    products_data.splice(inx,1)
+                }
+            })
+            fs.writeFileSync('./data_base/products.json', JSON.stringify(products_data, null, 4))
+            res.writeHead(200,{"Content-Type": "application/json"})
+            return res.end('Product was deleted')
+        }
     }
 
 
