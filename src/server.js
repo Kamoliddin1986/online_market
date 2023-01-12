@@ -275,7 +275,22 @@ http.createServer((req,res) => {
             })
         }
 
-       
+        if(req_name == 'products'){
+            req.on('data', chunk =>{
+                let new_data = JSON.parse(chunk);
+                products_data.push({
+                    product_id: products_data[products_data.length-1].product_id +1,
+                    sub_category_id: new_data.sub_category_id,
+                    model: new_data.model,
+                    product_name: new_data.product_name,
+                    color: new_data.color,
+                    price: new_data.price
+                })
+                fs.writeFileSync('./data_base/products.json',JSON.stringify(products_data, null, 4))
+                res.writeHead(200,{"Content-Type": "application/json"})
+                return res.end('product was added!!!')
+            })
+        }
     }
 
 }).listen(4444, ()=> {
