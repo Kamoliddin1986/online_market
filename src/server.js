@@ -309,6 +309,21 @@ http.createServer((req,res) => {
                 return res.end('Category was updated!!!')
             })
         }
+
+        if(req_name == 'subcategories'){
+            req.on('data', chunk =>{
+                let update_data = JSON.parse(chunk);
+                subCategories_data.forEach(sub => {
+                    if(sub.sub_category_id == req_id){
+                        sub.category_id = (update_data.category_id || sub.category_id),
+                        sub.sub_category_name = (update_data.sub_category_name || sub.sub_category_name)
+                    }
+                })
+                fs.writeFileSync('./data_base/subCategories.json',JSON.stringify(subCategories_data, null, 4))
+                res.writeHead(200,{"Content-Type": "application/json"})
+                return res.end('SubCategory was updated!!!')
+            })
+        }
     }
 
 
