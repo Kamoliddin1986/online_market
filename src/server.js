@@ -293,6 +293,26 @@ http.createServer((req,res) => {
         }
     }
 
+    if(req.method == 'PUT'){
+
+        if(req_name == 'categories'){
+            req.on('data', chunk =>{
+                let update_data = JSON.parse(chunk);
+                categories_data.forEach(cat => {
+
+                    if(cat.category_id == req_id){                    
+                    cat.category_name = (update_data.category_name || cat.category_name)
+                }
+                })
+                fs.writeFileSync('./data_base/categories.json',JSON.stringify(categories_data, null, 4))
+                res.writeHead(200,{"Content-Type": "application/json"})
+                return res.end('Category was updated!!!')
+            })
+        }
+    }
+
+
+
 }).listen(4444, ()=> {
     console.log("server is running on 4444 port");
 })
