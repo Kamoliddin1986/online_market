@@ -53,7 +53,7 @@ http.createServer((req,res) => {
                   result.push({...category,subCategories: object.sub})
                   
                 })
-                javob = result
+
                 res.writeHead(200,{"Content-Type": "application/json"})
                 return res.end(JSON.stringify(result))
     }        
@@ -115,7 +115,7 @@ http.createServer((req,res) => {
 
     function productsByCategoryId(res,id){
         let result = []
-                    let jav = categories_by_id(id,0)
+                    let jav = categories_by_id(0,id)
                     jav.subCategories.forEach(sub_id => {
                         products_data.forEach(pr => {
 
@@ -170,7 +170,7 @@ http.createServer((req,res) => {
 
         if(filter =='categoryId'){
 
-            return productsByCategoryId(res,value) 
+            return productsByCategoryId(res,value)
 
         }else if(filter =='subCategoryId'){
 
@@ -236,6 +236,10 @@ http.createServer((req,res) => {
                     return res.end(JSON.stringify(otvet))
 
 
+
+                }else{
+                    res.writeHead(200,{"Content-Type": "application/json"})
+                    return res.end(JSON.stringify([]))
                 }
                 
 
